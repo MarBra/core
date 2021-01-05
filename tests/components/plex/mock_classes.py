@@ -247,7 +247,7 @@ class MockPlexServer:
         """Mock the playlist lookup method."""
         return MockPlexMediaItem(playlist, mediatype="playlist")
 
-    @lru_cache()
+    @lru_cache
     def playlists(self):
         """Mock the playlists lookup method with a lazy init."""
         return [
@@ -334,6 +334,7 @@ class MockPlexSession:
         self.usernames = [list(MOCK_USERS)[index]]
         self.players = [player]
         self._section = MockPlexLibrarySection("Movies")
+        self.sessionKey = index + 1
 
     @property
     def duration(self):

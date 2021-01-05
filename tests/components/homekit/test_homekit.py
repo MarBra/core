@@ -1,6 +1,7 @@
 """Tests for the HomeKit component."""
 import os
 from typing import Dict
+from unittest.mock import ANY, AsyncMock, MagicMock, Mock, patch
 
 from pyhap.accessory import Accessory
 import pytest
@@ -66,7 +67,6 @@ from homeassistant.util import json as json_util
 
 from .util import PATH_HOMEKIT, async_init_entry, async_init_integration
 
-from tests.async_mock import ANY, AsyncMock, MagicMock, Mock, patch
 from tests.common import MockConfigEntry, mock_device_registry, mock_registry
 from tests.components.homekit.common import patch_debounce
 
@@ -747,7 +747,7 @@ async def test_homekit_too_many_accessories(hass, hk_driver, caplog):
     ):
         await homekit.async_start()
         await hass.async_block_till_done()
-        assert "would exceeded" in caplog.text
+        assert "would exceed" in caplog.text
 
 
 async def test_homekit_finds_linked_batteries(
