@@ -14,7 +14,7 @@ tone_control_enable:
   description: "Enable Tone control to be able to change Bass and/or Treble levels."
   fields:
     entity_id:
-      description: "Name(s) of the denonavr entities where to run the API method."
+      description: "Name(s) of the denonavr entities."
       example: "media_player.living_room_receiver"
     is_tone_control_enabled:
       description: "True/false for enable/disable."

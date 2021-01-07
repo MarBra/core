@@ -213,7 +213,7 @@ class DenonDevice(MediaPlayerEntity):
 
     @property
     def is_tone_control_enabled(self):
-        """Return boolean if volume is currently muted."""
+        """Return boolean if tone control is currently enabled."""
         return self._tone_control_status
 
     @property
@@ -409,7 +409,7 @@ class DenonDevice(MediaPlayerEntity):
         self._receiver.send_get_command(command)
 
     def tone_control_enable(self, is_tone_control_enabled, **kwargs):
-        """Send generic command."""
+        """Enable tone control."""
         if is_tone_control_enabled:
             return self._receiver.enable_tone_control()
         return self._receiver.disable_tone_control()
