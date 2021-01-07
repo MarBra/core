@@ -44,6 +44,9 @@ from .config_flow import (
 _LOGGER = logging.getLogger(__name__)
 
 ATTR_SOUND_MODE_RAW = "sound_mode_raw"
+ATTR_TONE_CONTROL_ENABLED = "is_tone_control_enabled"
+ATTR_TREBLE = "treble"
+ATTR_BASS = "bass"
 
 SUPPORT_DENON = (
     SUPPORT_VOLUME_STEP
@@ -103,6 +106,10 @@ class DenonDevice(MediaPlayerEntity):
         self._frequency = self._receiver.frequency
         self._station = self._receiver.station
 
+        self._tone_control_status = self._receiver._tone_control_status
+        self._treble = self._receiver.treble
+        self._bass = self._receiver.bass
+
         self._sound_mode_support = self._receiver.support_sound_mode
         if self._sound_mode_support:
             self._sound_mode = self._receiver.sound_mode
@@ -156,6 +163,11 @@ class DenonDevice(MediaPlayerEntity):
         self._band = self._receiver.band
         self._frequency = self._receiver.frequency
         self._station = self._receiver.station
+
+        self._tone_control_status = self._receiver._tone_control_status
+        self._treble = self._receiver.treble
+        self._bass = self._receiver.bass
+
         if self._sound_mode_support:
             self._sound_mode = self._receiver.sound_mode
             self._sound_mode_raw = self._receiver.sound_mode_raw
@@ -198,6 +210,11 @@ class DenonDevice(MediaPlayerEntity):
     def is_volume_muted(self):
         """Return boolean if volume is currently muted."""
         return self._muted
+
+    @property
+    def is_tone_control_enabled(self):
+        """Return boolean if volume is currently muted."""
+        return self._tone_control_status
 
     @property
     def volume_level(self):
@@ -313,7 +330,12 @@ class DenonDevice(MediaPlayerEntity):
             and self._sound_mode_support
             and self._power == "ON"
         ):
-            return {ATTR_SOUND_MODE_RAW: self._sound_mode_raw}
+            return {
+                ATTR_SOUND_MODE_RAW: self._sound_mode_raw,
+                ATTR_TONE_CONTROL_ENABLED: self._tone_control_status,
+                ATTR_TREBLE: self._treble,
+                ATTR_BASS: self._bass,
+            }
         return {}
 
     def media_play_pause(self):
@@ -385,3 +407,25 @@ class DenonDevice(MediaPlayerEntity):
     def get_command(self, command, **kwargs):
         """Send generic command."""
         self._receiver.send_get_command(command)
+
+    def tone_control_enable(self, is_tone_control_enabled, **kwargs):
+        """Send generic command."""
+        if is_tone_control_enabled:
+            return self._receiver.enable_tone_control()
+        return self._receiver.disable_tone_control()
+
+    def treble_up(self):
+        """Increase level of treble"""
+        return self._receiver.set_treble(self._receiver._treble + 1)
+
+    def treble_down(self):
+        """Reduce level of treble"""
+        return self._receiver.set_treble(self._receiver._treble - 1)
+
+    def bass_up(self):
+        """Increase level of bass"""
+        return self._receiver.set_bass(self._receiver._bass + 1)
+
+    def bass_down(self):
+        """Reduce level of bass"""
+        return self._receiver.set_bass(self._receiver._bass - 1)

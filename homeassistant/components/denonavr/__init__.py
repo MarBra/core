@@ -24,16 +24,37 @@ from .receiver import ConnectDenonAVR
 CONF_RECEIVER = "receiver"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
 SERVICE_GET_COMMAND = "get_command"
+SERVICE_TONE_CONTROL_ENABLE = "tone_control_enable"
+
+SERVICE_BASS_UP = "bass_up"
+SERVICE_BASS_DOWN = "bass_down"
+
+SERVICE_TREBLE_UP = "treble_up"
+SERVICE_TREBLE_DOWN = "treble_down"
+
 ATTR_COMMAND = "command"
+ATTR_TONE_CONTROL_ENABLED = "is_tone_control_enabled"
 
 _LOGGER = logging.getLogger(__name__)
 
 CALL_SCHEMA = vol.Schema({vol.Required(ATTR_ENTITY_ID): cv.comp_entity_ids})
 
 GET_COMMAND_SCHEMA = CALL_SCHEMA.extend({vol.Required(ATTR_COMMAND): cv.string})
+TONE_CONTROL_ENABLE_SCHEMA = CALL_SCHEMA.extend(
+    {vol.Required(ATTR_TONE_CONTROL_ENABLED): cv.boolean}
+)
+
 
 SERVICE_TO_METHOD = {
-    SERVICE_GET_COMMAND: {"method": "get_command", "schema": GET_COMMAND_SCHEMA}
+    SERVICE_GET_COMMAND: {"method": "get_command", "schema": GET_COMMAND_SCHEMA},
+    SERVICE_TONE_CONTROL_ENABLE: {
+        "method": SERVICE_TONE_CONTROL_ENABLE,
+        "schema": TONE_CONTROL_ENABLE_SCHEMA,
+    },
+    SERVICE_BASS_UP: {"method": SERVICE_BASS_UP, "schema": CALL_SCHEMA},
+    SERVICE_BASS_DOWN: {"method": SERVICE_BASS_DOWN, "schema": CALL_SCHEMA},
+    SERVICE_TREBLE_UP: {"method": SERVICE_TREBLE_UP, "schema": CALL_SCHEMA},
+    SERVICE_TREBLE_DOWN: {"method": SERVICE_TREBLE_DOWN, "schema": CALL_SCHEMA},
 }
 
 
