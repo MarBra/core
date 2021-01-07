@@ -4,7 +4,12 @@ from unittest.mock import patch
 import pytest
 
 from homeassistant.components import media_player
-from homeassistant.components.denonavr import ATTR_COMMAND, SERVICE_GET_COMMAND
+from homeassistant.components.denonavr import (
+    ATTR_COMMAND,
+    ATTR_DYNAMIC_EQ_ENABLED,
+    SERVICE_GET_COMMAND,
+    SERVICE_DYNAMIC_EQ_ENABLE,
+)
 from homeassistant.components.denonavr.config_flow import (
     CONF_MANUFACTURER,
     CONF_MODEL,
@@ -93,3 +98,24 @@ async def test_get_command(hass, client):
     await hass.async_block_till_done()
 
     client.send_get_command.assert_called_with("test_command")
+
+
+async def test_dynamic_eq(hass, client):
+    """Test that dynamic eq method works."""
+    await setup_denonavr(hass)
+
+    data = {
+        ATTR_ENTITY_ID: ENTITY_ID,
+        ATTR_DYNAMIC_EQ_ENABLED: True,
+    }
+    # Verify on call
+    await hass.services.async_call(DOMAIN, SERVICE_DYNAMIC_EQ_ENABLE, data)
+    await hass.async_block_till_done()
+
+    # Verify off call
+    data[ATTR_DYNAMIC_EQ_ENABLED] = False
+    await hass.services.async_call(DOMAIN, SERVICE_DYNAMIC_EQ_ENABLE, data)
+    await hass.async_block_till_done()
+
+    client.dynamic_eq_on.assert_called_once()
+    client.dynamic_eq_off.assert_called_once()
