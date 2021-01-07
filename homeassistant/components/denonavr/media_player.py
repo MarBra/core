@@ -400,7 +400,7 @@ class DenonDevice(MediaPlayerEntity):
         self._receiver.send_get_command(command)
 
     def dynamic_eq_enable(self, is_dynamic_eq_enabled):
-        """Turn DynamicEQ on or off"""
+        """Turn DynamicEQ on or off."""
         if is_dynamic_eq_enabled:
             self._receiver.dynamic_eq_on()
         else:
