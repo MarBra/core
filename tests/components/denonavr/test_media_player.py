@@ -7,8 +7,8 @@ from homeassistant.components import media_player
 from homeassistant.components.denonavr import (
     ATTR_COMMAND,
     ATTR_DYNAMIC_EQ,
-    SERVICE_SET_DYNAMIC_EQ,
     SERVICE_GET_COMMAND,
+    SERVICE_SET_DYNAMIC_EQ,
 )
 from homeassistant.components.denonavr.config_flow import (
     CONF_MANUFACTURER,
