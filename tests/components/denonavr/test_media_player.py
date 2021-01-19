@@ -6,8 +6,8 @@ import pytest
 from homeassistant.components import media_player
 from homeassistant.components.denonavr import (
     ATTR_COMMAND,
-    ATTR_DYNAMIC_EQ_ENABLED,
-    SERVICE_DYNAMIC_EQ_ENABLE,
+    ATTR_DYNAMIC_EQ,
+    SERVICE_SET_DYNAMIC_EQ,
     SERVICE_GET_COMMAND,
 )
 from homeassistant.components.denonavr.config_flow import (
@@ -106,15 +106,15 @@ async def test_dynamic_eq(hass, client):
 
     data = {
         ATTR_ENTITY_ID: ENTITY_ID,
-        ATTR_DYNAMIC_EQ_ENABLED: True,
+        ATTR_DYNAMIC_EQ: True,
     }
     # Verify on call
-    await hass.services.async_call(DOMAIN, SERVICE_DYNAMIC_EQ_ENABLE, data)
+    await hass.services.async_call(DOMAIN, SERVICE_SET_DYNAMIC_EQ, data)
     await hass.async_block_till_done()
 
     # Verify off call
-    data[ATTR_DYNAMIC_EQ_ENABLED] = False
-    await hass.services.async_call(DOMAIN, SERVICE_DYNAMIC_EQ_ENABLE, data)
+    data[ATTR_DYNAMIC_EQ] = False
+    await hass.services.async_call(DOMAIN, SERVICE_SET_DYNAMIC_EQ, data)
     await hass.async_block_till_done()
 
     client.dynamic_eq_on.assert_called_once()
