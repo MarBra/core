@@ -44,7 +44,7 @@ from .config_flow import (
 _LOGGER = logging.getLogger(__name__)
 
 ATTR_SOUND_MODE_RAW = "sound_mode_raw"
-ATTR_DYNAMIC_EQ_ENABLED = "is_dynamic_eq_enabled"
+ATTR_DYNAMIC_EQ = "dynamic_eq"
 
 SUPPORT_DENON = (
     SUPPORT_VOLUME_STEP
@@ -311,22 +311,20 @@ class DenonDevice(MediaPlayerEntity):
         return None
 
     @property
-    def is_dynamic_eq_enabled(self):
+    def dynamic_eq(self):
         """Return boolean if DynamicEQ is currently enabled."""
         return self._dynamic_eq
 
     @property
     def device_state_attributes(self):
         """Return device specific state attributes."""
+        if self._power != "ON":
+            return {}
         state_attributes = {}
-        if (
-            self._sound_mode_raw is not None
-            and self._sound_mode_support
-            and self._power == "ON"
-        ):
+        if self._sound_mode_raw is not None and self._sound_mode_support:
             state_attributes[ATTR_SOUND_MODE_RAW] = self._sound_mode_raw
         if self._dynamic_eq:
-            state_attributes[ATTR_DYNAMIC_EQ_ENABLED] = self._dynamic_eq
+            state_attributes[ATTR_DYNAMIC_EQ] = self._dynamic_eq
         return state_attributes
 
     def media_play_pause(self):
@@ -399,8 +397,8 @@ class DenonDevice(MediaPlayerEntity):
         """Send generic command."""
         self._receiver.send_get_command(command)
 
-    def dynamic_eq_enable(self, is_dynamic_eq_enabled):
+    def set_dynamic_eq(self, dynamic_eq):
         """Turn DynamicEQ on or off."""
-        if is_dynamic_eq_enabled:
+        if dynamic_eq:
             return self._receiver.dynamic_eq_on()
         return self._receiver.dynamic_eq_off()

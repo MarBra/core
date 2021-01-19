@@ -24,9 +24,11 @@ from .receiver import ConnectDenonAVR
 CONF_RECEIVER = "receiver"
 UNDO_UPDATE_LISTENER = "undo_update_listener"
 SERVICE_GET_COMMAND = "get_command"
-SERVICE_DYNAMIC_EQ_ENABLE = "dynamic_eq_enable"
+SERVICE_SET_DYNAMIC_EQ = "set_dynamic_eq"
 
-ATTR_DYNAMIC_EQ_ENABLED = "is_dynamic_eq_enabled"
+
+ATTR_COMMAND = "command"
+ATTR_DYNAMIC_EQ = "dynamic_eq"
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,15 +37,13 @@ CALL_SCHEMA = vol.Schema({vol.Required(ATTR_ENTITY_ID): cv.comp_entity_ids})
 
 GET_COMMAND_SCHEMA = CALL_SCHEMA.extend({vol.Required(ATTR_COMMAND): cv.string})
 
-DYNAMIC_EQ_ENABLE_SCHEMA = CALL_SCHEMA.extend(
-    {vol.Required(ATTR_DYNAMIC_EQ_ENABLED): cv.boolean}
-)
+SET_DYNAMIC_EQ_SCHEMA = CALL_SCHEMA.extend({vol.Required(ATTR_DYNAMIC_EQ): cv.boolean})
 
 SERVICE_TO_METHOD = {
     SERVICE_GET_COMMAND: {"method": "get_command", "schema": GET_COMMAND_SCHEMA},
-    SERVICE_DYNAMIC_EQ_ENABLE: {
-        "method": SERVICE_DYNAMIC_EQ_ENABLE,
-        "schema": DYNAMIC_EQ_ENABLE_SCHEMA,
+    SERVICE_SET_DYNAMIC_EQ: {
+        "method": SERVICE_SET_DYNAMIC_EQ,
+        "schema": SET_DYNAMIC_EQ_SCHEMA,
     },
 }
 
