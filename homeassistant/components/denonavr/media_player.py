@@ -38,6 +38,8 @@ from .config_flow import (
     CONF_MODEL,
     CONF_SERIAL_NUMBER,
     CONF_TYPE,
+    CONF_UPDATE_AUDYSSEY,
+    DEFAULT_UPDATE_AUDYSSEY,
     DOMAIN,
 )
 
@@ -74,7 +76,16 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             unique_id = f"{config_entry.unique_id}-{receiver_zone.zone}"
         else:
             unique_id = None
-        entities.append(DenonDevice(receiver_zone, unique_id, config_entry))
+        entities.append(
+            DenonDevice(
+                receiver_zone,
+                unique_id,
+                config_entry,
+                hass.data[DOMAIN][config_entry.entry_id].get(
+                    CONF_UPDATE_AUDYSSEY, DEFAULT_UPDATE_AUDYSSEY
+                ),
+            )
+        )
     _LOGGER.debug(
         "%s receiver at host %s initialized", receiver.manufacturer, receiver.host
     )
@@ -84,12 +95,13 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class DenonDevice(MediaPlayerEntity):
     """Representation of a Denon Media Player Device."""
 
-    def __init__(self, receiver, unique_id, config_entry):
+    def __init__(self, receiver, unique_id, config_entry, update_audyssey):
         """Initialize the device."""
         self._receiver = receiver
         self._name = self._receiver.name
         self._unique_id = unique_id
         self._config_entry = config_entry
+        self._update_audyssey = update_audyssey
         self._muted = self._receiver.muted
         self._volume = self._receiver.volume
         self._current_source = self._receiver.input_func
@@ -104,7 +116,8 @@ class DenonDevice(MediaPlayerEntity):
         self._frequency = self._receiver.frequency
         self._station = self._receiver.station
 
-        self._dynamic_eq = self._receiver.dynamic_eq
+        if self._update_audyssey:
+            self._dynamic_eq = self._receiver.dynamic_eq
 
         self._sound_mode_support = self._receiver.support_sound_mode
         if self._sound_mode_support:
@@ -145,7 +158,9 @@ class DenonDevice(MediaPlayerEntity):
     def update(self):
         """Get the latest status information from device."""
         self._receiver.update()
-        self._receiver.update_audyssey()
+        if self._update_audyssey:
+            self._receiver.update_audyssey()
+            self._dynamic_eq = self._receiver.dynamic_eq
         self._name = self._receiver.name
         self._muted = self._receiver.muted
         self._volume = self._receiver.volume
@@ -160,7 +175,6 @@ class DenonDevice(MediaPlayerEntity):
         self._band = self._receiver.band
         self._frequency = self._receiver.frequency
         self._station = self._receiver.station
-        self._dynamic_eq = self._receiver.dynamic_eq
         if self._sound_mode_support:
             self._sound_mode = self._receiver.sound_mode
             self._sound_mode_raw = self._receiver.sound_mode_raw
@@ -323,7 +337,7 @@ class DenonDevice(MediaPlayerEntity):
         state_attributes = {}
         if self._sound_mode_raw is not None and self._sound_mode_support:
             state_attributes[ATTR_SOUND_MODE_RAW] = self._sound_mode_raw
-        if self._dynamic_eq:
+        if self._dynamic_eq is not None:
             state_attributes[ATTR_DYNAMIC_EQ] = self._dynamic_eq
         return state_attributes
 
@@ -400,5 +414,10 @@ class DenonDevice(MediaPlayerEntity):
     def set_dynamic_eq(self, dynamic_eq):
         """Turn DynamicEQ on or off."""
         if dynamic_eq:
-            return self._receiver.dynamic_eq_on()
-        return self._receiver.dynamic_eq_off()
+            result = self._receiver.dynamic_eq_on()
+        else:
+            result = self._receiver.dynamic_eq_off()
+        if self._update_audyssey:
+            self._receiver.update_audyssey()
+            self._dynamic_eq = self._receiver.dynamic_eq
+        return result

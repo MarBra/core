@@ -11,10 +11,12 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 
 from .config_flow import (
     CONF_SHOW_ALL_SOURCES,
+    CONF_UPDATE_AUDYSSEY,
     CONF_ZONE2,
     CONF_ZONE3,
     DEFAULT_SHOW_SOURCES,
     DEFAULT_TIMEOUT,
+    DEFAULT_UPDATE_AUDYSSEY,
     DEFAULT_ZONE2,
     DEFAULT_ZONE3,
     DOMAIN,
@@ -69,7 +71,6 @@ async def async_setup_entry(
 ):
     """Set up the denonavr components from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-
     # Connect to receiver
     connect_denonavr = ConnectDenonAVR(
         hass,
@@ -87,6 +88,9 @@ async def async_setup_entry(
 
     hass.data[DOMAIN][entry.entry_id] = {
         CONF_RECEIVER: receiver,
+        CONF_UPDATE_AUDYSSEY: entry.options.get(
+            CONF_UPDATE_AUDYSSEY, DEFAULT_UPDATE_AUDYSSEY
+        ),
         UNDO_UPDATE_LISTENER: undo_listener,
     }
 
