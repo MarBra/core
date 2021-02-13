@@ -11,6 +11,7 @@ from homeassistant.components.denonavr.config_flow import (
     CONF_SERIAL_NUMBER,
     CONF_SHOW_ALL_SOURCES,
     CONF_TYPE,
+    CONF_UPDATE_AUDYSSEY,
     CONF_ZONE2,
     CONF_ZONE3,
     DOMAIN,
@@ -549,6 +550,7 @@ async def test_options_flow(hass):
         CONF_SHOW_ALL_SOURCES: True,
         CONF_ZONE2: True,
         CONF_ZONE3: True,
+        CONF_UPDATE_AUDYSSEY: False,
     }
 
 
