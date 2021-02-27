@@ -28,8 +28,6 @@ UNDO_UPDATE_LISTENER = "undo_update_listener"
 SERVICE_GET_COMMAND = "get_command"
 SERVICE_SET_DYNAMIC_EQ = "set_dynamic_eq"
 
-
-ATTR_COMMAND = "command"
 ATTR_DYNAMIC_EQ = "dynamic_eq"
 
 
