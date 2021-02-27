@@ -325,11 +325,6 @@ class DenonDevice(MediaPlayerEntity):
         return None
 
     @property
-    def dynamic_eq(self):
-        """Return boolean if DynamicEQ is currently enabled."""
-        return self._dynamic_eq
-
-    @property
     def device_state_attributes(self):
         """Return device specific state attributes."""
         if self._power != "ON":
